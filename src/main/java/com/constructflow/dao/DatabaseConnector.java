@@ -3,19 +3,39 @@ package com.constructflow.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import com.constructflow.config.ConfigLoader;
 
 public class DatabaseConnector {
-    // !! IMPORTANT !!
-    // Replace with your actual server name, username, and password if not using Windows Auth.
-    private static final String DATABASE_URL = "jdbc:sqlserver://localhost;databaseName=ConstructFlowDB;integratedSecurity=true;trustServerCertificate=true;";
-    
-    public static Connection getConnection() throws SQLException {
+
+    private static DatabaseConnector instance;
+    private Connection connection;
+
+    private final String url = ConfigLoader.get("db.url");
+    private final String user = ConfigLoader.get("db.user");
+    private final String password = ConfigLoader.get("db.password");
+
+
+    private DatabaseConnector() {
         try {
-            // Ensure the SQL Server JDBC driver is loaded
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            return DriverManager.getConnection(DATABASE_URL);
-        } catch (ClassNotFoundException e) {
-            throw new SQLException("SQL Server JDBC Driver not found.", e);
+            System.out.println("[Singleton] Attempting connection to MS SQL Server...");
+            connection = DriverManager.getConnection(url, user, password);
+            System.out.println("[Singleton] Connection Successful!");
+        } catch (SQLException e) {
+            System.err.println("[Singleton] Connection Failed: " + e.getMessage());
         }
+    }
+
+    public static synchronized DatabaseConnector getInstance() {
+        if (instance == null) {
+            instance = new DatabaseConnector();
+        }
+        return instance;
+    }
+
+    public Connection getConnection() throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection(url, user, password);
+        }
+        return connection;
     }
 }

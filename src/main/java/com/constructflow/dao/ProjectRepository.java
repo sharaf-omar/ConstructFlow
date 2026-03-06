@@ -1,154 +1,113 @@
 package com.constructflow.dao;
 
 import com.constructflow.entity.Project;
-import com.constructflow.entity.Task; // Assuming you have a Task entity class
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-/**
- * Data Access Object for the Project entity.
- * Handles all database CRUD operations for Projects.
- */
 public class ProjectRepository {
 
-    /**
-     * Default constructor
-     */
     public ProjectRepository() {
+        System.out.println("[DAO] ProjectRepository initialized.");
     }
 
-    /**
-     * Retrieves a single project from the database by its ID.
-     * @param projectID The ID of the project to find.
-     * @return A Project object if found, otherwise null.
-     */
-    public Project findProjectByID(int projectID) {
-        String sql = "SELECT * FROM Project WHERE projectID = ?";
-        try (Connection conn = DatabaseConnector.getConnection();
+    public Project findProjectByID(String projectID) {
+        String sql = "SELECT * FROM projects WHERE id = ?";
+
+        try (Connection conn = DatabaseConnector.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, projectID);
+            pstmt.setString(1, projectID);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
                 Project project = new Project();
-                project.setProjectID(rs.getInt("projectID"));
-                project.setProjectName(rs.getString("projectName"));
+                project.setProjectID(rs.getString("id"));
+                project.setProjectName(rs.getString("name"));
                 project.setLocation(rs.getString("location"));
-                project.setStartDate(rs.getDate("startDate"));
-                project.setEndDate(rs.getDate("endDate"));
+                project.setStartDate(rs.getDate("start_date"));
+                project.setEndDate(rs.getDate("end_date"));
                 project.setStatus(rs.getString("status"));
-                //set clientID and managerID if they are attributes in the Project class
+                System.out.println("[DAO] Project found: " + project.getProjectName());
                 return project;
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Proper logging should be used in a real application
+            System.err.println("[DAO] Error finding project: " + e.getMessage());
         }
         return null;
     }
 
-    /**
-     * Retrieves all projects from the database.
-     * REQUIRED FOR WALKING SKELETON.
-     * @return A List of all Project objects.
-     */
     public List<Project> findAllProjects() {
         List<Project> projects = new ArrayList<>();
-        String sql = "SELECT * FROM Project";
-        try (Connection conn = DatabaseConnector.getConnection();
+        String sql = "SELECT * FROM projects";
+
+        try (Connection conn = DatabaseConnector.getInstance().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 Project project = new Project();
-                project.setProjectID(rs.getInt("projectID"));
-                project.setProjectName(rs.getString("projectName"));
+                project.setProjectID(rs.getString("id"));
+                project.setProjectName(rs.getString("name"));
                 project.setLocation(rs.getString("location"));
+                project.setStartDate(rs.getDate("start_date"));
+                project.setEndDate(rs.getDate("end_date"));
                 project.setStatus(rs.getString("status"));
-                // Add other setters as needed
                 projects.add(project);
             }
+            System.out.println("[DAO] Retrieved " + projects.size() + " projects.");
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("[DAO] Error listing projects: " + e.getMessage());
         }
         return projects;
     }
 
-    /**
-     * Saves a new project to the database.
-     * REQUIRED FOR WALKING SKELETON.
-     * @param project The Project object to save.
-     * @return true if the save was successful, false otherwise.
-     */
     public boolean save(Project project) {
-        String sql = "INSERT INTO Project (projectName, location, startDate, endDate, status, clientID, managerID) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnector.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            /*
-            pstmt.setString(1, project.getProjectName());
-            pstmt.setString(2, project.getLocation());
-            pstmt.setDate(3, new java.sql.Date(project.getStartDate().getTime())); // Convert java.util.Date to java.sql.Date
-            pstmt.setDate(4, new java.sql.Date(project.getEndDate().getTime()));
-            pstmt.setString(5, project.getStatus());
-            pstmt.setInt(6, project.getClientID()); // Assuming getters exist
-            pstmt.setInt(7, project.getManagerID()); // Assuming getters exist
-            */
-            int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
-    /**
-     * Updates an existing project in the database.
-     * @param project The Project object with updated information.
-     * @return true if the update was successful, false otherwise.
-     */
-    public boolean update(Project project) {
-        String sql = "UPDATE Project SET projectName = ?, location = ?, startDate = ?, endDate = ?, status = ? WHERE projectID = ?";
-        try (Connection conn = DatabaseConnector.getConnection();
+        String sql = "INSERT INTO projects (name, location, start_date, end_date, status) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnector.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, project.getProjectName());
             pstmt.setString(2, project.getLocation());
-            pstmt.setDate(3, new java.sql.Date(project.getStartDate().getTime()));
-            pstmt.setDate(4, new java.sql.Date(project.getEndDate().getTime()));
+            pstmt.setDate(3, project.getStartDate() != null ? new java.sql.Date(project.getStartDate().getTime()) : null);
+            pstmt.setDate(4, project.getEndDate() != null ? new java.sql.Date(project.getEndDate().getTime()) : null);
             pstmt.setString(5, project.getStatus());
-            pstmt.setInt(6, project.getProjectID());
 
             int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
+            if (affectedRows > 0) {
+                System.out.println("[DAO] Project '" + project.getProjectName() + "' saved successfully.");
+                return true;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            System.err.println("[DAO] Error saving project: " + e.getMessage());
         }
-    }
-    
-    // The methods below are placeholders from the generated code.
-    // They would be implemented in their respective DAO classes (e.g., TaskDAO).
-    
-    /**
-     * @param task 
-     * @return
-     */
-    public boolean updateTask(Task task) {
-        // This logic should be in TaskDAO.java
-        System.out.println("This method belongs in the TaskDAO class.");
         return false;
     }
 
-    /**
-     * @param project 
-     * @return
-     */
-    public boolean updateProjectAndChildrenStatus(Project project) {
-        // This is a more complex transaction. For now, it's just a placeholder.
-        // It would involve updating the Project, and then all related Tasks, etc.
-        System.out.println("This method would handle a complex transaction for archival.");
+    public boolean update(Project project) {
+        String sql = "UPDATE projects SET name = ?, location = ?, start_date = ?, end_date = ?, status = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConnector.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, project.getProjectName());
+            pstmt.setString(2, project.getLocation());
+            pstmt.setDate(3, project.getStartDate() != null ? new java.sql.Date(project.getStartDate().getTime()) : null);
+            pstmt.setDate(4, project.getEndDate() != null ? new java.sql.Date(project.getEndDate().getTime()) : null);
+            pstmt.setString(5, project.getStatus());
+            pstmt.setString(6, project.getProjectID());
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("[DAO] Project ID " + project.getProjectID() + " updated.");
+                return true;
+            }
+        } catch (SQLException e) {
+            System.err.println("[DAO] Error updating project: " + e.getMessage());
+        }
         return false;
     }
 }

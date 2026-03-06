@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class Project {
 
-    private int projectID;
+    private String projectID; // Changed from int to String for UUID/GUID
     private String projectName;
     private Date endDate;
     private String location;
@@ -24,10 +23,10 @@ public class Project {
     }
 
     public Project(Map<String, Object> details) {
-        this(); // Call default constructor to initialize list
+        this();
         System.out.println("[Entity] Project created with details map.");
         if (details != null) {
-            this.projectID = (int) details.getOrDefault("projectID", 0);
+            this.projectID = (String) details.getOrDefault("projectID", null);
             this.projectName = (String) details.getOrDefault("projectName", "Untitled Project");
             this.location = (String) details.getOrDefault("location", "N/A");
             this.startDate = (Date) details.getOrDefault("startDate", new Date());
@@ -35,51 +34,11 @@ public class Project {
         }
     }
 
-    public Task findTaskInProject(int taskID) {
-        System.out.println("[Entity] Searching for Task ID " + taskID + " in project '" + this.projectName + "'...");
-        for (Task task : tasks) {
-            if (task.getTaskID() == taskID) {
-                System.out.println("[Entity] Task found.");
-                return task;
-            }
-        }
-        System.out.println("[Entity] Task not found.");
-        return null;
-    }
-
-    public void archive() {
-        if (canBeArchived()) {
-            this.status = "Archived";
-            System.out.println("[Entity] Project '" + this.projectName + "' has been archived.");
-        } else {
-            System.out.println("[Entity] Project '" + this.projectName + "' cannot be archived. Not all tasks are completed.");
-        }
-    }
-
-    public boolean canBeArchived() {
-        for (Task task : tasks) {
-            if (!Objects.equals(task.getStatus(), "Completed")) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public void setBudget(Budget budget) {
-        this.budget = budget;
-        System.out.println("[Entity] Budget has been set for project '" + this.projectName + "'.");
-    }
-
-    public void addTask(Task task) {
-        this.tasks.add(task);
-        System.out.println("[Entity] Task '" + task.getTaskName() + "' added to project '" + this.projectName + "'.");
-    }
-
-    public int getProjectID() {
+    public String getProjectID() {
         return projectID;
     }
 
-    public void setProjectID(int projectID) {
+    public void setProjectID(String projectID) {
         this.projectID = projectID;
     }
 
@@ -123,25 +82,12 @@ public class Project {
         this.status = status;
     }
 
-    public List<Task> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
-    }
-
-    public Budget getBudget() {
-        return budget;
-    }
-
     @Override
     public String toString() {
         return "Project{" +
-                "projectID=" + projectID +
+                "projectID='" + projectID + '\'' +
                 ", projectName='" + projectName + '\'' +
                 ", status='" + status + '\'' +
-                ", taskCount=" + tasks.size() +
                 '}';
     }
 }

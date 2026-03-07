@@ -17,13 +17,9 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("===========================================");
-        System.out.println("   CONSTRUCTFLOW SYSTEM - DESIGN PATTERN TESTS");
-        System.out.println("===========================================\n");
 
-        // ---------------------------------------------------------
-        // PATTERN 1: SINGLETON (DATABASE CONNECTION)
-        // ---------------------------------------------------------
+        System.out.println("CONSTRUCTFLOW SYSTEM - DESIGN PATTERN TESTS");
+        //db singleton test
         System.out.println("--- TEST 1: SINGLETON PATTERN (DATABASE) ---");
         DatabaseConnector db1 = DatabaseConnector.getInstance();
         DatabaseConnector db2 = DatabaseConnector.getInstance();
@@ -44,8 +40,6 @@ public class Main {
         } else {
             System.err.println("[FAIL] Singleton Instance Check Failed!");
         }
-
-        // Functional Test: Read Data using the Singleton Connection
         System.out.println("\n[Functional Test] Reading Projects from DB...");
         ProjectRepository repo = new ProjectRepository();
         List<Project> projects = repo.findAllProjects();
@@ -54,11 +48,7 @@ public class Main {
         } else {
             System.out.println("[WARN] No projects found (Check DB data).");
         }
-
-
-        // ---------------------------------------------------------
-        // PATTERN 2: SINGLETON (NOTIFICATION SERVICE)
-        // ---------------------------------------------------------
+        //noti singleton test
         System.out.println("\n--- TEST 2: SINGLETON PATTERN (NOTIFICATIONS) ---");
         NotificationService ns1 = NotificationService.getInstance();
         NotificationService ns2 = NotificationService.getInstance();
@@ -66,10 +56,7 @@ public class Main {
         if (ns1 == ns2) {
             System.out.println("[PASS] NotificationService Singleton Check: Verified.");
         }
-
-        // ---------------------------------------------------------
-        // PATTERN 3: FACTORY METHOD (RESOURCE CREATION)
-        // ---------------------------------------------------------
+        //factory method test
         System.out.println("\n--- TEST 3: FACTORY METHOD PATTERN (RESOURCES) ---");
 
         // Test Material Factory
@@ -84,18 +71,13 @@ public class Main {
         excavator.setName("CAT 320 Excavator");
         excavator.displayInfo(); // Should print "[Factory Method] Equipment (Reusable)..."
 
-
-        // ---------------------------------------------------------
-        // PATTERN 4: ABSTRACT FACTORY (NOTIFICATIONS)
-        // ---------------------------------------------------------
+        //ABSTRACT FACTORY (NOTIFICATIONS) test
         System.out.println("\n--- TEST 4: ABSTRACT FACTORY PATTERN (NOTIFICATIONS) ---");
-
         // Scenario A: Manager wants EMAIL notifications
         System.out.println("[Scenario A] User preferences set to EMAIL:");
         NotificationChannelFactory emailFactory = new EmailChannelFactory();
         TaskReminder emailReminder = emailFactory.createTaskReminder();
         LowStockAlert emailAlert = emailFactory.createLowStockAlert();
-
         emailReminder.send();
         emailAlert.send();
 
@@ -103,12 +85,13 @@ public class Main {
         System.out.println("\n[Scenario B] User preferences set to PUSH (Mobile):");
         NotificationChannelFactory pushFactory = new PushChannelFactory();
         TaskReminder pushReminder = pushFactory.createTaskReminder();
+        LowStockAlert pushAlert = pushFactory.createLowStockAlert();
         pushReminder.send();
+        pushAlert.send();
 
 
-        // ---------------------------------------------------------
-        // PATTERN 5: ABSTRACT FACTORY (REPORTING)
-        // ---------------------------------------------------------
+        //ABSTRACT FACTORY (REPORTING) test
+
         System.out.println("\n--- TEST 5: ABSTRACT FACTORY PATTERN (REPORTING) ---");
 
         // Scenario A: Client requests PDF Reports
@@ -124,10 +107,10 @@ public class Main {
         System.out.println("\n[Scenario B] Generating Data Export in EXCEL Format:");
         ReportFactory excelFactory = new ExcelReportFactory();
         SummaryReport excelSummary = excelFactory.createSummaryReport();
+        WorkloadReport excelWorkload = excelFactory.createWorkloadReport();
         excelSummary.generate();
+        excelWorkload.generate();
 
-        System.out.println("\n===========================================");
-        System.out.println("      ALL SYSTEM TESTS COMPLETED");
-        System.out.println("===========================================");
+        System.out.println("ALL SYSTEM TESTS COMPLETED");
     }
 }

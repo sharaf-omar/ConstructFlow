@@ -9,15 +9,15 @@ import com.constructflow.entity.Task;
 
 public class NotificationService {
 
-    // 1. Singleton Instance
+
     private static NotificationService instance;
 
-    // 2. Private Constructor
+
     private NotificationService() {
         System.out.println("[Singleton] NotificationService initialized. Central dispatcher ready.");
     }
 
-    // 3. Global Access Point
+
     public static synchronized NotificationService getInstance() {
         if (instance == null) {
             instance = new NotificationService();
@@ -48,9 +48,9 @@ public class NotificationService {
         System.out.println("[NotificationService] Dispatching Low Stock Alert for: " + resource.getName() +
                 " to Manager: " + recipient.getFirstName());
 
-        // Use the Abstract Factory
+
         LowStockAlert alert = factory.createLowStockAlert();
-        alert.send(); // Polymorphic call
+        alert.send();
     }
 
 

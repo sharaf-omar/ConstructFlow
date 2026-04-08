@@ -1,0 +1,64 @@
+@startuml Decorator Pattern - Report Enhancement
+interface ReportFactory {
+    +createWorkloadReport(): WorkloadReport
+    +createSummaryReport(): SummaryReport
+}
+
+abstract class ReportDecorator implements ReportFactory {
+    -wrappedFactory: ReportFactory
+    +ReportDecorator(factory: ReportFactory)
+    +createWorkloadReport(): WorkloadReport
+    +createSummaryReport(): SummaryReport
+    +applyDecoration(reportType: String): void {abstract}
+}
+
+class WatermarkDecorator extends ReportDecorator {
+    -watermarkText: String
+    +WatermarkDecorator(factory: ReportFactory, watermarkText: String)
+    +applyDecoration(reportType: String): void
+    +getWatermarkText(): String
+}
+
+class DigitalSignatureDecorator extends ReportDecorator {
+    -certificatePath: String
+    -signedBy: String
+    +DigitalSignatureDecorator(factory: ReportFactory, certificatePath: String, signedBy: String)
+    +applyDecoration(reportType: String): void
+    +getCertificatePath(): String
+    +getSignedBy(): String
+}
+
+class TimestampDecorator extends ReportDecorator {
+    -includeAuditTrail: boolean
+    +TimestampDecorator(factory: ReportFactory)
+    +applyDecoration(reportType: String): void
+    +setIncludeAuditTrail(includeAuditTrail: boolean): void
+}
+
+class EncryptionDecorator extends ReportDecorator {
+    -password: String
+    -encryptionAlgorithm: String
+    +EncryptionDecorator(factory: ReportFactory, password: String)
+    +applyDecoration(reportType: String): void
+    +getEncryptionAlgorithm(): String
+    +setEncryptionAlgorithm(algorithm: String): void
+}
+
+class MetadataHeaderDecorator extends ReportDecorator {
+    -projectName: String
+    -generatedBy: String
+    +MetadataHeaderDecorator(factory: ReportFactory, projectName: String, generatedBy: String)
+    +applyDecoration(reportType: String): void
+    +getProjectName(): String
+    +getGeneratedBy(): String
+}
+
+class CompressionDecorator extends ReportDecorator {
+    -compressionLevel: String
+    +CompressionDecorator(factory: ReportFactory, compressionLevel: String)
+    +applyDecoration(reportType: String): void
+    +getCompressionLevel(): String
+}
+
+ReportDecorator --> ReportFactory : wraps
+@enduml

@@ -1,0 +1,92 @@
+@startuml Flyweight Pattern - Object Pool
+
+skinparam classAttributeIconSize 0
+
+class EmployeeFlyweightFactory {
+    -instance: EmployeeFlyweightFactory
+    -employeePool: Map<Integer, FlyweightEmployee>
+    +getInstance(): EmployeeFlyweightFactory
+    +getEmployee(employeeID: int, name: String, role: String): FlyweightEmployee
+    +getPoolSize(): int
+    +printPoolStats(): void
+}
+
+class FlyweightEmployee {
+    -employeeID: int
+    -name: String
+    -role: String
+    +FlyweightEmployee(employeeID: int, name: String, role: String)
+    +getEmployeeID(): int
+    +getName(): String
+    +getRole(): String
+    +toString(): String
+    +assignToTask(taskId: String, site: String, hours: int): void
+}
+
+class EquipmentFlyweightFactory {
+    -instance: EquipmentFlyweightFactory
+    -equipmentPool: Map<Integer, FlyweightEquipment>
+    +getInstance(): EquipmentFlyweightFactory
+    +getEquipment(equipmentID: int, name: String, type: String): FlyweightEquipment
+    +getPoolSize(): int
+    +printPoolStats(): void
+}
+
+class FlyweightEquipment {
+    -equipmentID: int
+    -name: String
+    -type: String
+    +FlyweightEquipment(equipmentID: int, name: String, type: String)
+    +getEquipmentID(): int
+    +getName(): String
+    +getType(): String
+    +toString(): String
+    +useOnTask(taskId: String, site: String, hoursUsed: int): void
+}
+
+class MaterialFlyweightFactory {
+    -instance: MaterialFlyweightFactory
+    -materialPool: Map<Integer, FlyweightMaterial>
+    +getInstance(): MaterialFlyweightFactory
+    +getMaterial(materialID: int, name: String, type: String): FlyweightMaterial
+    +getPoolSize(): int
+    +printPoolStats(): void
+}
+
+class FlyweightMaterial {
+    -materialID: int
+    -name: String
+    -type: String
+    +FlyweightMaterial(materialID: int, name: String, type: String)
+    +getMaterialID(): int
+    +getName(): String
+    +getType(): String
+    +toString(): String
+    +useOnTask(taskId: String, quantity: int, unit: String, site: String): void
+}
+
+note right of FlyweightEmployee
+Intrinsic (shared):
+- employeeID, name, role
+Extrinsic (unshared, passed at use-time):
+- taskId, site, hours
+end note
+
+note right of FlyweightEquipment
+Intrinsic (shared):
+- equipmentID, name, type
+Extrinsic (unshared, passed at use-time):
+- taskId, site, hoursUsed
+end note
+
+note right of FlyweightMaterial
+Intrinsic (shared):
+- materialID, name, type
+Extrinsic (unshared, passed at use-time):
+- taskId, quantity, unit, site
+end note
+
+EmployeeFlyweightFactory --> FlyweightEmployee : creates/manages
+EquipmentFlyweightFactory --> FlyweightEquipment : creates/manages
+MaterialFlyweightFactory --> FlyweightMaterial : creates/manages
+@enduml

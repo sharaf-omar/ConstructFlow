@@ -1,0 +1,34 @@
+@startuml Adapter Pattern - Report Engine
+interface ReportFactory {
+    +createWorkloadReport(): WorkloadReport
+    +createSummaryReport(): SummaryReport
+}
+
+class JasperReportEngine {
+    +generateReportFromTemplate(templateName: String, dataSource: String): String
+    +exportToFormat(report: String, format: String): String
+}
+
+class CrystalReportsEngine {
+    +buildReport(query: String, layout: String): void
+    +formatReport(style: String): void
+    +output(fileFormat: String): String
+}
+
+class JasperReportAdapter implements ReportFactory {
+    -jasperEngine: JasperReportEngine
+    +JasperReportAdapter()
+    +createWorkloadReport(): WorkloadReport
+    +createSummaryReport(): SummaryReport
+}
+
+class CrystalReportsAdapter implements ReportFactory {
+    -crystalEngine: CrystalReportsEngine
+    +CrystalReportsAdapter()
+    +createWorkloadReport(): WorkloadReport
+    +createSummaryReport(): SummaryReport
+}
+
+JasperReportAdapter --> JasperReportEngine : adapts
+CrystalReportsAdapter --> CrystalReportsEngine : adapts
+@enduml

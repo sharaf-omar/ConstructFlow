@@ -1,0 +1,45 @@
+@startuml Adapter Pattern - Data Import
+interface DataAdapter {
+    +convertToProject(externalData: Object): Project
+    +getSourceType(): String
+}
+
+class SAPDataAdapter implements DataAdapter {
+    +convertToProject(externalData: Object): Project
+    +getSourceType(): String
+}
+
+class AutodeskDataAdapter implements DataAdapter {
+    +convertToProject(externalData: Object): Project
+    +getSourceType(): String
+}
+
+class CSVDataAdapter implements DataAdapter {
+    +convertToProject(externalData: Object): Project
+    +getSourceType(): String
+}
+
+class Project {
+    -projectID: String
+    -projectName: String
+    -location: String
+    -startDate: Date
+    -status: String
+    +Project()
+    +Project(details: Map<String, Object>)
+    +getProjectID(): String
+    +setProjectID(projectID: String): void
+    +getProjectName(): String
+    +setProjectName(projectName: String): void
+    +getLocation(): String
+    +setLocation(location: String): void
+    +getStartDate(): Date
+    +setStartDate(startDate: Date): void
+    +getStatus(): String
+    +setStatus(status: String): void
+}
+
+SAPDataAdapter --> Project : converts to
+AutodeskDataAdapter --> Project : converts to
+CSVDataAdapter --> Project : converts to
+@enduml

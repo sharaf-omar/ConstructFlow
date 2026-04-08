@@ -1,0 +1,49 @@
+@startuml Bridge Pattern - Database Access
+interface DatabaseDriver {
+    +connect(): Connection
+    +testConnection(conn: Connection): boolean
+    +getDriverType(): String
+    +disconnect(conn: Connection): void
+}
+
+class MSSQLDriver implements DatabaseDriver {
+    -url: String
+    -user: String
+    -password: String
+    +connect(): Connection
+    +testConnection(conn: Connection): boolean
+    +getDriverType(): String
+    +disconnect(conn: Connection): void
+}
+
+class PostgreSQLDriver implements DatabaseDriver {
+    -url: String
+    -user: String
+    -password: String
+    +PostgreSQLDriver(host: String, port: int, database: String, user: String, password: String)
+    +connect(): Connection
+    +testConnection(conn: Connection): boolean
+    +getDriverType(): String
+    +disconnect(conn: Connection): void
+}
+
+abstract class AbstractDatabase {
+    -driver: DatabaseDriver
+    -connection: Connection
+    +AbstractDatabase(driver: DatabaseDriver)
+    +connect(): boolean
+    +performQuery(): void {abstract}
+    +switchDriver(newDriver: DatabaseDriver): void
+    +disconnect(): void
+    +getDriverType(): String
+    +getConnection(): Connection
+}
+
+class ProjectDatabase extends AbstractDatabase {
+    +ProjectDatabase(driver: DatabaseDriver)
+    +performQuery(): void
+    +getProjectCount(): int
+}
+
+AbstractDatabase --> DatabaseDriver : uses
+@enduml

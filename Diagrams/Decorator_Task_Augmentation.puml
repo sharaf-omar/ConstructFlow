@@ -1,0 +1,80 @@
+@startuml Decorator Pattern - Task Augmentation
+interface TaskComponent {
+    +execute(): void
+    +getDescription(): String
+    +getTask(): Task
+}
+
+class ConcreteTaskComponent implements TaskComponent {
+    -task: Task
+    +ConcreteTaskComponent(task: Task)
+    +execute(): void
+    +getDescription(): String
+    +getTask(): Task
+}
+
+abstract class TaskDecorator implements TaskComponent {
+    -wrappedComponent: TaskComponent
+    +TaskDecorator(component: TaskComponent)
+    +execute(): void
+    +getDescription(): String
+    +getTask(): Task
+    +addDecoration(): void {abstract}
+}
+
+class PriorityTaskDecorator extends TaskDecorator {
+    -priority: String
+    +PriorityTaskDecorator(component: TaskComponent, priority: String)
+    +addDecoration(): void
+    +execute(): void
+    +getDescription(): String
+    +getPriority(): String
+}
+
+class ReviewableTaskDecorator extends TaskDecorator {
+    -approved: boolean
+    -reviewedBy: String
+    +ReviewableTaskDecorator(component: TaskComponent)
+    +addDecoration(): void
+    +execute(): void
+    +getDescription(): String
+    +approve(approver: String): void
+    +isApproved(): boolean
+}
+
+class AuditableTaskDecorator extends TaskDecorator {
+    -auditLog: StringBuilder
+    +AuditableTaskDecorator(component: TaskComponent)
+    +addDecoration(): void
+    +execute(): void
+    +getDescription(): String
+    +getAuditLog(): String
+    +printAuditLog(): void
+}
+
+class RestrictedTaskDecorator extends TaskDecorator {
+    -authorizedUsers: Set<String>
+    -restrictionLevel: String
+    +RestrictedTaskDecorator(component: TaskComponent, restrictionLevel: String)
+    +addDecoration(): void
+    +execute(): void
+    +getDescription(): String
+    +grantAccess(username: String): void
+    +hasAccess(username: String): boolean
+    +executeIfAuthorized(username: String): void
+    +getRestrictionLevel(): String
+}
+
+class EscalatedTaskDecorator extends TaskDecorator {
+    -escalationLevel: int
+    -reason: String
+    +EscalatedTaskDecorator(component: TaskComponent, escalationLevel: int, reason: String)
+    +addDecoration(): void
+    +execute(): void
+    +getDescription(): String
+    +getEscalationLevel(): int
+    +getReason(): String
+}
+
+TaskDecorator --> TaskComponent : wraps
+@enduml

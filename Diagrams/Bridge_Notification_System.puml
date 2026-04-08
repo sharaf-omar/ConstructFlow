@@ -1,0 +1,43 @@
+@startuml Bridge Pattern - Notification System
+interface NotificationDelivery {
+    +send(subject: String, message: String, recipient: String): void
+    +getDeliveryType(): String
+}
+
+class EmailDelivery implements NotificationDelivery {
+    +send(subject: String, message: String, recipient: String): void
+    +getDeliveryType(): String
+}
+
+class PushDelivery implements NotificationDelivery {
+    +send(subject: String, message: String, recipient: String): void
+    +getDeliveryType(): String
+}
+
+abstract class AbstractNotification {
+    -delivery: NotificationDelivery
+    -recipient: String
+    +AbstractNotification(delivery: NotificationDelivery, recipient: String)
+    +send(): void {abstract}
+    +setDelivery(delivery: NotificationDelivery): void
+    +getDeliveryType(): String
+}
+
+class TaskNotification extends AbstractNotification {
+    -taskName: String
+    -taskDescription: String
+    +TaskNotification(delivery: NotificationDelivery, recipient: String, taskName: String, taskDescription: String)
+    +send(): void
+    +setTaskDetails(taskName: String, taskDescription: String): void
+}
+
+class AlertNotification extends AbstractNotification {
+    -alertType: String
+    -severity: String
+    +AlertNotification(delivery: NotificationDelivery, recipient: String, alertType: String, severity: String)
+    +send(): void
+    +setAlertDetails(alertType: String, severity: String): void
+}
+
+AbstractNotification --> NotificationDelivery : uses
+@enduml

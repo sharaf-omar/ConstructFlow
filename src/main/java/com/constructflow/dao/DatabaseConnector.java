@@ -17,11 +17,14 @@ public class DatabaseConnector {
 
     private DatabaseConnector() {
         try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             System.out.println("[Singleton] Attempting connection to MS SQL Server...");
             connection = DriverManager.getConnection(url, user, password);
             System.out.println("[Singleton] Connection Successful!");
         } catch (SQLException e) {
             System.err.println("[Singleton] Connection Failed: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.err.println("[Singleton] JDBC Driver not found: " + e.getMessage());
         }
     }
 
@@ -34,6 +37,11 @@ public class DatabaseConnector {
 
     public Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
+            try {
+                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            } catch (ClassNotFoundException e) {
+                throw new SQLException("JDBC Driver not found", e);
+            }
             connection = DriverManager.getConnection(url, user, password);
         }
         return connection;

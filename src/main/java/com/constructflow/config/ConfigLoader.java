@@ -9,11 +9,16 @@ public class ConfigLoader {
 
     static {
         try {
-            InputStream input = ConfigLoader.class
-                    .getClassLoader()
-                    .getResourceAsStream("db.properties");
+            InputStream inStream = ConfigLoader.class.getResourceAsStream("/db.properties");
+            if (inStream == null) {
+                inStream = ConfigLoader.class.getResourceAsStream("/dbExample.properties");
+            }
 
-            properties.load(input);
+            if (inStream == null) {
+                throw new RuntimeException("db.properties or dbExample.properties not found in classpath; make sure src/main/resources is included.");
+            }
+
+            properties.load(inStream);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to load configuration file", e);
